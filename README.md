@@ -41,5 +41,4 @@ Qilindi: to‘liq tsikl (idle → greeting → listening → javob/fallback → 
 
 Muammolar va yechimlar
 1) "today"/"hot"/"cold" WEATHER da edi → olib tashlandi. 2) LaunchedEffect(isLooping) eski videoni tugatib, state ustiga yozardi → blok olib tashlandi. 3) GetVideoForKeywordUseCase.kt da noto‘g‘ri klass edi → to‘g‘ri use case yozildi.
-
 Faqat en-US, substring matching, videolar faqat raw. Kelajakda: , so‘z bo‘yicha matching, ko‘p tillar, backend/NLU, testlar.
