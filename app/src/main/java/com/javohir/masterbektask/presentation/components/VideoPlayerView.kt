@@ -47,7 +47,6 @@ fun VideoPlayerView(
 
     LaunchedEffect(uri) {
         if (uri != null) {
-            Log.d("VideoPlayerView", "Loading video (dual): $uri, frontIndex=$frontIndex")
 
             val back = if (frontIndex == 0) playerB else playerA
             val mediaItem = MediaItem.fromUri(uri)
@@ -77,10 +76,7 @@ fun VideoPlayerView(
         }
     }
 
-    // RepeatMode faqat yangi video yuklanayotganda o'rnatiladi (LaunchedEffect(uri) ichida).
-    // Bu blok olib tashlandi: isLooping o'zgarganda ikkala playerni OFF qilish eski (listening)
-    // videoni loopdan chiqarib tugatadi va noto'g'ri onVideoEnded -> startListening() keltirib
-    // GENERAL_RESPONSE state ustiga yozilardi.
+
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
