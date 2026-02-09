@@ -13,7 +13,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -78,6 +81,27 @@ fun VideoPlayerView(
         val mode = if (isLooping) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
         playerA.repeatMode = mode
         playerB.repeatMode = mode
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE, Lifecycle.Event.ON_STOP -> {
+                    playerA.pause()
+                    playerB.pause()
+                }
+                Lifecycle.Event.ON_RESUME, Lifecycle.Event.ON_START -> {
+                    val active = if (frontIndex == 0) playerA else playerB
+                    active.playWhenReady = true
+                }
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
     DisposableEffect(uri, isLooping, onVideoEnded) {
