@@ -1,4 +1,4 @@
-package com.javohir.masterbektask.ui.theme
+package com.javohir.masterbektask.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
