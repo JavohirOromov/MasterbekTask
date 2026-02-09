@@ -23,7 +23,6 @@ class SpeechRecognizerHelper @Inject constructor(
 
     private var speechRecognizer: SpeechRecognizer? = null
     private var isListening = false
-    /** Natija allaqachon yetkazilgan bo'lsa, stopListening() dan keyin keladigan ERROR_CLIENT ni e'tiborsiz qilamiz */
     private var resultAlreadyDelivered = false
 
     private var onResultCallback: ((String) -> Unit)? = null
@@ -42,7 +41,6 @@ class SpeechRecognizerHelper @Inject constructor(
         onListeningChanged: (Boolean) -> Unit
     ) {
         if (!isAvailable()) {
-            Log.e("SpeechRecognizerHelper", "Speech recognition mavjud emas")
             onError("Speech recognition mavjud emas")
             return
         }
@@ -56,7 +54,6 @@ class SpeechRecognizerHelper @Inject constructor(
         this.onListeningChangedCallback = onListeningChanged
         this.resultAlreadyDelivered = false
 
-        Log.d("SpeechRecognizerHelper", "Speech recognition boshlanmoqda...")
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
         speechRecognizer?.setRecognitionListener(createRecognitionListener())
@@ -71,40 +68,32 @@ class SpeechRecognizerHelper @Inject constructor(
         speechRecognizer?.startListening(intent)
         isListening = true
         onListeningChangedCallback?.invoke(true)
-        Log.d("SpeechRecognizerHelper", "Mikrofon yoqildi - ovozni tinglash boshlandi")
     }
 
 
     fun stopListening() {
-        Log.d("SpeechRecognizerHelper", "Speech recognition to'xtatilmoqda...")
         speechRecognizer?.stopListening()
         speechRecognizer?.cancel()
         isListening = false
         onListeningChangedCallback?.invoke(false)
-        Log.d("SpeechRecognizerHelper", "Mikrofon o'chirildi")
     }
 
 
     private fun createRecognitionListener(): RecognitionListener {
         return object : RecognitionListener {
             override fun onReadyForSpeech(params: Bundle?) {
-                Log.d("SpeechRecognizerHelper", "Tayyor - ovozni qabul qilishga tayyor")
             }
 
             override fun onBeginningOfSpeech() {
-                Log.d("SpeechRecognizerHelper", "Ovoz boshlanmoqda...")
             }
 
             override fun onRmsChanged(rmsdB: Float) {
-                // Ovoz balandligi o'zgarishi (ixtiyoriy log)
             }
 
             override fun onBufferReceived(buffer: ByteArray?) {
-                // Buffer qabul qilindi (ixtiyoriy log)
             }
 
             override fun onEndOfSpeech() {
-                Log.d("SpeechRecognizerHelper", "Ovoz tugadi - tahlil qilinmoqda...")
                 isListening = false
                 onListeningChangedCallback?.invoke(false)
             }
@@ -113,9 +102,7 @@ class SpeechRecognizerHelper @Inject constructor(
                 isListening = false
                 onListeningChangedCallback?.invoke(false)
 
-                // Natija allaqachon yetkazilgan bo'lsa va stopListening() tufayli ERROR_CLIENT kelsa, e'tiborsiz qilamiz
                 if (error == SpeechRecognizer.ERROR_CLIENT && resultAlreadyDelivered) {
-                    Log.d("SpeechRecognizerHelper", "ERROR_CLIENT e'tiborsiz qilindi - natija allaqachon yetkazilgan")
                     return
                 }
 
@@ -132,7 +119,6 @@ class SpeechRecognizerHelper @Inject constructor(
                     else -> "Noma'lum xatolik"
                 }
 
-                Log.e("SpeechRecognizerHelper", "Xatolik: $errorMessage (code: $error)")
                 onErrorCallback?.invoke(errorMessage)
             }
 
@@ -148,15 +134,10 @@ class SpeechRecognizerHelper @Inject constructor(
                         null
                     }
                     
-                    // Barcha variantlarni log qilish
-                    Log.d("SpeechRecognizerHelper", "═══════════════════════════════════════")
-                    Log.d("SpeechRecognizerHelper", "🎤 OVOZ TEXT'GA AYLANDI!")
-                    Log.d("SpeechRecognizerHelper", "📝 To'liq natija: $bestMatch")
+
                     if (confidence != null) {
-                        Log.d("SpeechRecognizerHelper", "📊 Ishonchlilik: ${(confidence * 100).toInt()}%")
                     }
                     if (matches.size > 1) {
-                        Log.d("SpeechRecognizerHelper", "📋 Boshqa variantlar:")
                         matches.forEachIndexed { index, match ->
                             if (index > 0) {
                                 val conf = if (confidenceScores != null && index < confidenceScores.size) {
@@ -166,12 +147,10 @@ class SpeechRecognizerHelper @Inject constructor(
                             }
                         }
                     }
-                    Log.d("SpeechRecognizerHelper", "═══════════════════════════════════════")
-                    
+
                     resultAlreadyDelivered = true
                     onResultCallback?.invoke(bestMatch)
                 } else {
-                    Log.w("SpeechRecognizerHelper", "⚠️ Natija topilmadi - bo'sh natija")
                     onErrorCallback?.invoke("Natija topilmadi")
                 }
 
@@ -182,12 +161,10 @@ class SpeechRecognizerHelper @Inject constructor(
             override fun onPartialResults(partialResults: Bundle?) {
                 val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 if (!matches.isNullOrEmpty()) {
-                    Log.d("SpeechRecognizerHelper", "🔄 Qisman natija: ${matches[0]}")
                 }
             }
 
             override fun onEvent(eventType: Int, params: Bundle?) {
-                // Event'lar (ixtiyoriy log)
             }
         }
     }

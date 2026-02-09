@@ -13,7 +13,6 @@ class DetectKeywordUseCase @Inject constructor() {
 
     fun detectKeyword(text: String): VideoType?{
         val lowerText = text.lowercase().trim()
-        Log.d("DetectKeywordUseCase", " Text tahlil qilinmoqda: \"$text\" -> \"$lowerText\"")
 
         if (lowerText.isBlank()){
             Log.w("DetectKeywordUseCase", " Text bo'sh yoki faqat bo'shliq")
@@ -23,28 +22,23 @@ class DetectKeywordUseCase @Inject constructor() {
         val result = when {
             // Goodbye kalit so'zlari
             containsKeyword(lowerText, listOf("goodbye", "bye", "see you", "farewell", "good bye")) -> {
-                Log.d("DetectKeywordUseCase", " GOODBYE kalit so'zi topildi")
                 VideoType.GOODBYE
             }
 
             // Greeting kalit so'zlari
             containsKeyword(lowerText, listOf("hello", "hi", "hey", "greetings", "good morning", "good afternoon")) -> {
-                Log.d("DetectKeywordUseCase", " GREETING kalit so'zi topildi")
                 VideoType.GREETING
             }
 
             containsKeyword(lowerText, listOf("weather", "rain", "sunny", "cloudy", "temperature", "forecast")) -> {
-                Log.d("DetectKeywordUseCase", " WEATHER kalit so'zi topildi")
                 VideoType.WEATHER
             }
             // Boshqa hamma narsa - general response
             else -> {
-                Log.d("DetectKeywordUseCase", " GENERAL_RESPONSE (kalit so'z topilmadi)")
                 VideoType.GENERAL_RESPONSE
             }
         }
         
-        Log.d("DetectKeywordUseCase", " VideoType qaytarilmoqda: $result")
         return result
     }
 
