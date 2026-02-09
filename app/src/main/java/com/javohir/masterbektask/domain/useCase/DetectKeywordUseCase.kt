@@ -33,8 +33,7 @@ class DetectKeywordUseCase @Inject constructor() {
                 VideoType.GREETING
             }
 
-            // Weather kalit so'zlari
-            containsKeyword(lowerText, listOf("weather", "today", "rain", "sunny", "cloudy", "temperature", "hot", "cold")) -> {
+            containsKeyword(lowerText, listOf("weather", "rain", "sunny", "cloudy", "temperature", "forecast")) -> {
                 Log.d("DetectKeywordUseCase", " WEATHER kalit so'zi topildi")
                 VideoType.WEATHER
             }

@@ -77,11 +77,10 @@ fun VideoPlayerView(
         }
     }
 
-    LaunchedEffect(isLooping) {
-        val mode = if (isLooping) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
-        playerA.repeatMode = mode
-        playerB.repeatMode = mode
-    }
+    // RepeatMode faqat yangi video yuklanayotganda o'rnatiladi (LaunchedEffect(uri) ichida).
+    // Bu blok olib tashlandi: isLooping o'zgarganda ikkala playerni OFF qilish eski (listening)
+    // videoni loopdan chiqarib tugatadi va noto'g'ri onVideoEnded -> startListening() keltirib
+    // GENERAL_RESPONSE state ustiga yozilardi.
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {

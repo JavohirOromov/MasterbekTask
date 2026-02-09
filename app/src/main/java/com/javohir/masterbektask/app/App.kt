@@ -8,6 +8,5 @@ import dagger.hilt.android.HiltAndroidApp
  * Package: com.javohir.masterbektask.app
  * Description: Application class - Hilt uchun
  */
-
 @HiltAndroidApp
-class App: Application()
+class App : Application()

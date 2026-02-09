@@ -101,11 +101,11 @@ class ConversationViewModel @Inject constructor(
 
     private fun handleSpeechResult(text: String) {
         viewModelScope.launch {
-
+            android.util.Log.d("DebugWeather", "handleSpeechResult received text: [$text]")
             speechRecognizerHelper.stopListening()
 
             val videoResponse = getVideoForKeywordUseCase.getVideoForKeyword(text)
-            
+            android.util.Log.d("DebugWeather", "handleSpeechResult videoType=${videoResponse?.videoType} uri=${videoResponse?.uri}")
             if (videoResponse != null) {
                 val isLooping = getVideoForKeywordUseCase.shouldLoop(videoResponse.videoType)
                 updateState {
@@ -142,7 +142,21 @@ class ConversationViewModel @Inject constructor(
     private fun handleVideoEnded() {
         viewModelScope.launch {
             val currentState = _state.value.conversationState
-
+            // #region agent log
+            val branch = when (currentState) {
+                ConversationState.GREETING -> "startListening"
+                ConversationState.RESPONDING -> "startListening"
+                ConversationState.ERROR -> "startListening"
+                ConversationState.GOODBYE -> "loadIdleVideo"
+                else -> "none"
+            }
+            DebugLog.log(
+                message = "handleVideoEnded",
+                location = "ConversationViewModel.kt:handleVideoEnded",
+                data = mapOf("currentState" to currentState.toString(), "branch" to branch),
+                hypothesisId = "H2"
+            )
+            // #endregion
             when (currentState) {
                 ConversationState.GREETING -> {
                     startListening()

@@ -21,8 +21,11 @@ class ConversationRepositoryImpl @Inject constructor(
 
     override suspend fun getVideoUri(videoType: VideoType): Uri? {
         val fileName = videoTypeMapper.getFileName(videoType)
-        Log.d("ConversationRepositoryImpl", "🔍 VideoType: $videoType -> FileName: $fileName")
+        Log.d("ConversationRepositoryImpl", " VideoType: $videoType -> FileName: $fileName")
         val uri = videoAssetProvider.getVideoUri(fileName)
+        if (videoType == VideoType.GENERAL_RESPONSE || videoType == VideoType.WEATHER) {
+            Log.d("DebugWeather", "getVideoUri: videoType=$videoType fileName=$fileName uri=$uri")
+        }
         if (uri == null) {
             Log.e("ConversationRepositoryImpl", "   VideoType: $videoType, FileName: $fileName")
         } else {

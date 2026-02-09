@@ -1,9 +1,11 @@
 package com.javohir.masterbektask.domain.useCase
-import android.util.Log
+
+import android.net.Uri
 import com.javohir.masterbektask.domain.model.ConversationState
 import com.javohir.masterbektask.domain.model.VideoResponse
 import com.javohir.masterbektask.domain.model.VideoType
 import com.javohir.masterbektask.domain.repository.ConversationRepository
+import android.util.Log
 import javax.inject.Inject
 
 /**
@@ -17,92 +19,33 @@ class GetVideoForKeywordUseCase @Inject constructor(
     private val detectKeywordUseCase: DetectKeywordUseCase
 ) {
 
-    suspend fun getVideoForKeyword(text: String): VideoResponse? {
-        Log.d("GetVideoForKeywordUseCase", " Text tahlil qilinmoqda: \"$text\"")
-
-        val videoType = detectKeywordUseCase.detectKeyword(text)
-        if (videoType == null) {
-            Log.e("GetVideoForKeywordUseCase", " VideoType topilmadi - detectKeyword null qaytdi")
-            return null
-        }
-        Log.d("GetVideoForKeywordUseCase", " VideoType topildi: $videoType")
-
-        val uri = repository.getVideoUri(videoType)
-        if (uri == null) {
-               Log.e("GetVideoForKeywordUseCase", " URI topilmadi - repository.getVideoUri null qaytdi")
-            return null
-        }
-        Log.d("GetVideoForKeywordUseCase", " URI topildi: $uri")
-
-        val conversationState = getConversationStateForVideoType(videoType)
-             Log.d("GetVideoForKeywordUseCase", " ConversationState: $conversationState")
-
-        return VideoResponse(
-            videoType = videoType,
-            conversationState = conversationState,
-            uri = uri
-        )
+    suspend fun preloadAllVideos(): Map<VideoType, Uri> {
+        return repository.getAllVideoUris()
     }
 
-    fun getConversationStateForVideoType(videoType: VideoType): ConversationState {
-        return when (videoType) {
+    suspend fun getGreetingVideo(): VideoResponse? = videoResponseFor(VideoType.GREETING)
+    suspend fun getIdleVideo(): VideoResponse? = videoResponseFor(VideoType.IDLE)
+    suspend fun getListeningVideo(): VideoResponse? = videoResponseFor(VideoType.LISTENING)
+    suspend fun getFallbackVideo(): VideoResponse? = videoResponseFor(VideoType.FALLBACK)
+
+    suspend fun getVideoForKeyword(text: String): VideoResponse? {
+        val videoType = detectKeywordUseCase.detectKeyword(text) ?: return null
+        Log.d("GetVideoForKeywordUseCase", " getVideoForKeyword text=\"$text\" -> videoType=$videoType")
+        return videoResponseFor(videoType)
+    }
+
+    fun shouldLoop(videoType: VideoType): Boolean = videoType == VideoType.IDLE || videoType == VideoType.LISTENING
+
+    private suspend fun videoResponseFor(videoType: VideoType): VideoResponse? {
+        val uri = repository.getVideoUri(videoType) ?: return null
+        val conversationState = when (videoType) {
             VideoType.IDLE -> ConversationState.IDLE
             VideoType.GREETING -> ConversationState.GREETING
-            VideoType.LISTENING -> ConversationState.LISTENING
+            VideoType.LISTENING, VideoType.PROMPT -> ConversationState.LISTENING
+            VideoType.WEATHER, VideoType.GENERAL_RESPONSE -> ConversationState.RESPONDING
             VideoType.GOODBYE -> ConversationState.GOODBYE
             VideoType.FALLBACK -> ConversationState.ERROR
-            VideoType.WEATHER,
-            VideoType.GENERAL_RESPONSE,
-            VideoType.PROMPT -> ConversationState.RESPONDING
         }
-    }
-
-    fun shouldLoop(videoType: VideoType): Boolean {
-        return when (videoType) {
-            VideoType.IDLE,
-            VideoType.LISTENING -> true
-            else -> false
-        }
-    }
-    
-
-    suspend fun getIdleVideo(): VideoResponse? {
-        val uri = repository.getVideoUri(VideoType.IDLE) ?: return null
-        return VideoResponse(
-            videoType = VideoType.IDLE,
-            conversationState = ConversationState.IDLE,
-            uri = uri
-        )
-    }
-    
-    suspend fun getGreetingVideo(): VideoResponse? {
-        val uri = repository.getVideoUri(VideoType.GREETING) ?: return null
-        return VideoResponse(
-            videoType = VideoType.GREETING,
-            conversationState = ConversationState.GREETING,
-            uri = uri
-        )
-    }
-    
-    suspend fun getListeningVideo(): VideoResponse? {
-        val uri = repository.getVideoUri(VideoType.LISTENING) ?: return null
-        return VideoResponse(
-            videoType = VideoType.LISTENING,
-            conversationState = ConversationState.LISTENING,
-            uri = uri
-        )
-    }
-    
-    suspend fun getFallbackVideo(): VideoResponse? {
-        val uri = repository.getVideoUri(VideoType.FALLBACK) ?: return null
-        return VideoResponse(
-            videoType = VideoType.FALLBACK,
-            conversationState = ConversationState.ERROR,
-            uri = uri
-        )
-    }
-
-    suspend fun preloadAllVideos() {
-        repository.getAllVideoUris()
+        return VideoResponse(videoType = videoType, conversationState = conversationState, uri = uri)
     }
 }
