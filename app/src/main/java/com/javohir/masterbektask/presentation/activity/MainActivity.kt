@@ -52,8 +52,6 @@ class MainActivity : ComponentActivity() {
         ) {
 
             requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
-        } else {
-
-        }
+        } else { }
     }
 }

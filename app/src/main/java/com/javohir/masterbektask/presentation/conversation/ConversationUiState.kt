@@ -1,7 +1,6 @@
 package com.javohir.masterbektask.presentation.conversation
 import android.net.Uri
 import com.javohir.masterbektask.domain.model.ConversationState
-
 /**
  * Created by: Javohir Oromov macos
  * Project: MasterbekTask
