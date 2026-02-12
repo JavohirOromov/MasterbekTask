@@ -1,5 +1,4 @@
 package com.javohir.masterbektask.domain.model
-import android.net.Uri
 
 /**
  * Created by: Javohir Oromov macos
@@ -10,5 +9,5 @@ import android.net.Uri
 data class VideoResponse(
     val videoType: VideoType,
     val conversationState: ConversationState,
-    val uri: Uri
+    val uri: String
 )

@@ -1,6 +1,5 @@
 package com.javohir.masterbektask.domain.repository
 
-import android.net.Uri
 import com.javohir.masterbektask.domain.model.VideoType
 
 /**
@@ -10,6 +9,6 @@ import com.javohir.masterbektask.domain.model.VideoType
  * Description: Repository Interface
  */
 interface ConversationRepository {
-    suspend fun getVideoUri(videoType: VideoType): Uri?
-    suspend fun getAllVideoUris(): Map<VideoType, Uri>
+    suspend fun getVideoUri(videoType: VideoType): String?
+    suspend fun getAllVideoUris(): Map<VideoType, String>
 }

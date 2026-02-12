@@ -19,7 +19,7 @@ class ConversationRepositoryImpl @Inject constructor(
     private val videoTypeMapper: VideoTypeMapper
 ): ConversationRepository {
 
-    override suspend fun getVideoUri(videoType: VideoType): Uri? {
+    override suspend fun getVideoUri(videoType: VideoType): String? {
         val fileName = videoTypeMapper.getFileName(videoType)
         Log.d("ConversationRepositoryImpl", " VideoType: $videoType -> FileName: $fileName")
         val uri = videoAssetProvider.getVideoUri(fileName)
@@ -28,25 +28,22 @@ class ConversationRepositoryImpl @Inject constructor(
         }
         if (uri == null) {
             Log.e("ConversationRepositoryImpl", "   VideoType: $videoType, FileName: $fileName")
+            return null
         } else {
             Log.d("ConversationRepositoryImpl", " URI topildi: $uri")
+            return uri.toString()
         }
-        return uri
     }
 
-    override suspend fun getAllVideoUris(): Map<VideoType, Uri> {
-
+    override suspend fun getAllVideoUris(): Map<VideoType, String> {
         val allFileNames = videoTypeMapper.getAllFileNames()
-        
-
         val fileNameToUriMap = videoAssetProvider.getAllVideoUris(allFileNames)
         
-
         return fileNameToUriMap
             .mapNotNull { (fileName, uri) ->
                 val videoType = videoTypeMapper.getVideoTypeFromFileName(fileName)
                 if (videoType != null && uri != null) {
-                    videoType to uri
+                    videoType to uri.toString()
                 } else {
                     null
                 }

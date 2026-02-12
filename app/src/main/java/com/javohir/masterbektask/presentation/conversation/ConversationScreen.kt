@@ -1,8 +1,11 @@
 package com.javohir.masterbektask.presentation.conversation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,24 +68,30 @@ private fun ConversationContent(
     onAction: (ConversationIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-
-    
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .background(if (uiState.currentVideoUri == null) Color.White else Color.Transparent)
     ) {
+        if (uiState.currentVideoUri != null) {
+            VideoPlayerView(
+                uri = uiState.currentVideoUri,
+                isLooping = uiState.isLooping,
+                modifier = Modifier.fillMaxSize(),
+                onVideoEnded = {
+                    onAction(ConversationIntent.VideoEnded)
+                }
+            )
+        } else {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(48.dp),
+                color = Color.White
+            )
+        }
 
-        VideoPlayerView(
-            uri = uiState.currentVideoUri,
-            isLooping = uiState.isLooping,
-            modifier = Modifier.fillMaxSize(),
-            onVideoEnded = {
-                onAction(ConversationIntent.VideoEnded)
-            }
-        )
-
-
-        if (uiState.conversationState == ConversationState.IDLE) {
+        if (uiState.conversationState == ConversationState.IDLE && uiState.currentVideoUri != null) {
             StartChatButton(
                 onClick = { onAction(ConversationIntent.StartChat) },
                 modifier = Modifier

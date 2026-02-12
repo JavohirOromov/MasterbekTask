@@ -118,7 +118,7 @@ class SpeechRecognizerHelper @Inject constructor(
                     SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "Nutq timeout"
                     else -> "Noma'lum xatolik"
                 }
-
+                
                 onErrorCallback?.invoke(errorMessage)
             }
 

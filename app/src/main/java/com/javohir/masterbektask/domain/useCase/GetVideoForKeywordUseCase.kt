@@ -1,11 +1,8 @@
 package com.javohir.masterbektask.domain.useCase
-
-import android.net.Uri
 import com.javohir.masterbektask.domain.model.ConversationState
 import com.javohir.masterbektask.domain.model.VideoResponse
 import com.javohir.masterbektask.domain.model.VideoType
 import com.javohir.masterbektask.domain.repository.ConversationRepository
-import android.util.Log
 import javax.inject.Inject
 
 /**
@@ -19,7 +16,7 @@ class GetVideoForKeywordUseCase @Inject constructor(
     private val detectKeywordUseCase: DetectKeywordUseCase
 ) {
 
-    suspend fun preloadAllVideos(): Map<VideoType, Uri> {
+    suspend fun preloadAllVideos(): Map<VideoType, String> {
         return repository.getAllVideoUris()
     }
 
@@ -30,7 +27,6 @@ class GetVideoForKeywordUseCase @Inject constructor(
 
     suspend fun getVideoForKeyword(text: String): VideoResponse? {
         val videoType = detectKeywordUseCase.detectKeyword(text) ?: return null
-        Log.d("GetVideoForKeywordUseCase", " getVideoForKeyword text=\"$text\" -> videoType=$videoType")
         return videoResponseFor(videoType)
     }
 

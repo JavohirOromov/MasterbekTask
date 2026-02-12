@@ -23,7 +23,6 @@ class MainActivity : ComponentActivity() {
         if (isGranted) {
             Log.d("MainActivity", "Microphone permission granted")
         } else {
-
         }
     }
     

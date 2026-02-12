@@ -1,5 +1,5 @@
 package com.javohir.masterbektask.domain.useCase
-import android.util.Log
+
 import com.javohir.masterbektask.domain.model.VideoType
 import javax.inject.Inject
 
@@ -11,11 +11,10 @@ import javax.inject.Inject
  */
 class DetectKeywordUseCase @Inject constructor() {
 
-    fun detectKeyword(text: String): VideoType?{
+    fun detectKeyword(text: String): VideoType? {
         val lowerText = text.lowercase().trim()
 
-        if (lowerText.isBlank()){
-            Log.w("DetectKeywordUseCase", " Text bo'sh yoki faqat bo'shliq")
+        if (lowerText.isBlank()) {
             return null
         }
 
@@ -42,9 +41,9 @@ class DetectKeywordUseCase @Inject constructor() {
         return result
     }
 
-    private fun containsKeyword(text: String, keywords: List<String>): Boolean{
+    private fun containsKeyword(text: String, keywords: List<String>): Boolean {
         return keywords.any { keyword ->
-            text.contains(keyword,ignoreCase = true)
+            text.contains(keyword, ignoreCase = true)
         }
     }
 }

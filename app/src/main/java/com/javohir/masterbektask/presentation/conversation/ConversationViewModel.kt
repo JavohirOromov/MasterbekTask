@@ -4,6 +4,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.net.Uri
+import androidx.core.net.toUri
 import com.javohir.masterbektask.domain.model.ConversationState
 import com.javohir.masterbektask.domain.useCase.GetVideoForKeywordUseCase
 import com.javohir.masterbektask.utils.SpeechRecognizerHelper
@@ -88,7 +90,7 @@ class ConversationViewModel @Inject constructor(
             if (videoResponse != null) {
                 updateState {
                     it.copy(
-                        currentVideoUri = videoResponse.uri,
+                        currentVideoUri = videoResponse.uri.toUri(),
                         isLooping = getVideoForKeywordUseCase.shouldLoop(videoResponse.videoType),
                         conversationState = videoResponse.conversationState,
                         isListening = false
@@ -108,7 +110,7 @@ class ConversationViewModel @Inject constructor(
                 val isLooping = getVideoForKeywordUseCase.shouldLoop(videoResponse.videoType)
                 updateState {
                     it.copy(
-                        currentVideoUri = videoResponse.uri,
+                        currentVideoUri = videoResponse.uri.toUri(),
                         isLooping = isLooping,
                         conversationState = videoResponse.conversationState,
                         isListening = false
@@ -126,7 +128,7 @@ class ConversationViewModel @Inject constructor(
             if (videoResponse != null) {
                 updateState {
                     it.copy(
-                        currentVideoUri = videoResponse.uri,
+                        currentVideoUri = videoResponse.uri.toUri(),
                         isLooping = getVideoForKeywordUseCase.shouldLoop(videoResponse.videoType),
                         conversationState = videoResponse.conversationState,
                         isListening = false
@@ -165,13 +167,12 @@ class ConversationViewModel @Inject constructor(
             if (videoResponse != null) {
                 updateState {
                     it.copy(
-                        currentVideoUri = videoResponse.uri,
+                        currentVideoUri = videoResponse.uri.toUri(),
                         isLooping = getVideoForKeywordUseCase.shouldLoop(videoResponse.videoType),
                         conversationState = videoResponse.conversationState,
                         isListening = true
                     )
                 }
-                
 
                 speechRecognizerHelper.startListening(
                     onResult = { text ->
@@ -196,7 +197,7 @@ class ConversationViewModel @Inject constructor(
             if (videoResponse != null) {
                 updateState {
                     it.copy(
-                        currentVideoUri = videoResponse.uri,
+                        currentVideoUri = videoResponse.uri.toUri(),
                         isLooping = getVideoForKeywordUseCase.shouldLoop(videoResponse.videoType),
                         conversationState = videoResponse.conversationState,
                         isListening = false
