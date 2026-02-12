@@ -1,7 +1,6 @@
 package com.javohir.masterbektask.presentation.components
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,6 +49,7 @@ fun VideoPlayerView(
     val playerB = remember { ExoPlayer.Builder(context).build() }
     var frontIndex by remember { mutableIntStateOf(0) }
     var isVideoReady by remember { mutableStateOf(false) }
+    var hasEverShownVideo by remember { mutableStateOf(false) }
 
     val activePlayer: ExoPlayer = if (frontIndex == 0) playerA else playerB
 
@@ -69,6 +69,7 @@ fun VideoPlayerView(
                         if (playbackState == Player.STATE_READY) {
                             back.removeListener(this)
                             isVideoReady = true
+                            hasEverShownVideo = true
                             cont.resume(Unit)
                         }
                     }
@@ -79,10 +80,8 @@ fun VideoPlayerView(
 
             back.playWhenReady = true
             frontIndex = 1 - frontIndex
-            Log.d("VideoPlayerView", "Switched, frontIndex=$frontIndex")
         } else {
             isVideoReady = false
-            Log.d("VideoPlayerView", "URI is null")
         }
     }
 
@@ -113,7 +112,6 @@ fun VideoPlayerView(
         val listenerA = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (playbackState == Player.STATE_ENDED && frontIndex == 0 && !isLooping) {
-                    Log.d("VideoPlayerView", "Video A ended")
                     onVideoEnded()
                 }
             }
@@ -121,7 +119,6 @@ fun VideoPlayerView(
         val listenerB = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (playbackState == Player.STATE_ENDED && frontIndex == 1 && !isLooping) {
-                    Log.d("VideoPlayerView", "Video B ended")
                     onVideoEnded()
                 }
             }
@@ -148,7 +145,7 @@ fun VideoPlayerView(
             }
         )
 
-        if (!isVideoReady && uri != null) {
+        if (!isVideoReady && uri != null && !hasEverShownVideo) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
