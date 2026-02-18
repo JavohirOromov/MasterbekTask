@@ -212,7 +212,6 @@ class ConversationViewModel @Inject constructor(
         _state.update(update)
     }
 
-
     override fun onCleared() {
         super.onCleared()
         speechRecognizerHelper.release()

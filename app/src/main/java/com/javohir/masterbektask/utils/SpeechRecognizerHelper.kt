@@ -9,6 +9,7 @@ import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+
 /**
  * Created by: Javohir Oromov macos
  * Project: MasterbekTask
@@ -20,7 +21,6 @@ import javax.inject.Inject
 class SpeechRecognizerHelper @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) {
-
     private var speechRecognizer: SpeechRecognizer? = null
     private var isListening = false
     private var resultAlreadyDelivered = false
@@ -118,7 +118,7 @@ class SpeechRecognizerHelper @Inject constructor(
                     SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "Nutq timeout"
                     else -> "Noma'lum xatolik"
                 }
-                
+
                 onErrorCallback?.invoke(errorMessage)
             }
 
@@ -154,8 +154,8 @@ class SpeechRecognizerHelper @Inject constructor(
                     onErrorCallback?.invoke("Natija topilmadi")
                 }
 
+               onListeningChangedCallback?.let { false }
                 isListening = false
-                onListeningChangedCallback?.invoke(false)
             }
 
             override fun onPartialResults(partialResults: Bundle?) {
