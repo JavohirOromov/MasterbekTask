@@ -6,6 +6,7 @@ import com.javohir.masterbektask.data.repository.ConversationRepositoryImpl
 import com.javohir.masterbektask.domain.repository.ConversationRepository
 import com.javohir.masterbektask.domain.useCase.DetectKeywordUseCase
 import com.javohir.masterbektask.domain.useCase.GetVideoForKeywordUseCase
+import com.javohir.masterbektask.utils.NetworkMonitor
 import com.javohir.masterbektask.utils.SpeechRecognizerHelper
 import dagger.Module
 import dagger.Provides
@@ -62,6 +63,14 @@ object AppModule {
         detectKeywordUseCase: DetectKeywordUseCase
     ): GetVideoForKeywordUseCase {
         return GetVideoForKeywordUseCase(repository, detectKeywordUseCase)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkMonitor(
+        @ApplicationContext context: Context
+    ): NetworkMonitor {
+        return NetworkMonitor(context)
     }
 
     @Provides

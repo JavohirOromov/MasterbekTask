@@ -8,6 +8,7 @@ import android.net.Uri
 import androidx.core.net.toUri
 import com.javohir.masterbektask.domain.model.ConversationState
 import com.javohir.masterbektask.domain.useCase.GetVideoForKeywordUseCase
+import com.javohir.masterbektask.utils.NetworkMonitor
 import com.javohir.masterbektask.utils.SpeechRecognizerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ConversationViewModel @Inject constructor(
     private val getVideoForKeywordUseCase: GetVideoForKeywordUseCase,
-    private val speechRecognizerHelper: SpeechRecognizerHelper
+    private val speechRecognizerHelper: SpeechRecognizerHelper,
+    private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ConversationUiState())
@@ -86,6 +88,10 @@ class ConversationViewModel @Inject constructor(
 
     private fun handleStartChat() {
         viewModelScope.launch {
+            if (!networkMonitor.isConnected()) {
+                _event.emit(ConversationEvent.ShowNoInternetDialog)
+                return@launch
+            }
             val videoResponse = getVideoForKeywordUseCase.getGreetingVideo()
             if (videoResponse != null) {
                 updateState {
@@ -164,6 +170,10 @@ class ConversationViewModel @Inject constructor(
 
     private fun startListening() {
         viewModelScope.launch {
+            if (!networkMonitor.isConnected()) {
+                _event.emit(ConversationEvent.ShowNoInternetDialog)
+                return@launch
+            }
             val videoResponse = getVideoForKeywordUseCase.getListeningVideo()
             if (videoResponse != null) {
                 updateState {
