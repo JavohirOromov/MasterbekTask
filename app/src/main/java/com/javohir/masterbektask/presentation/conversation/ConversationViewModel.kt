@@ -90,6 +90,10 @@ class ConversationViewModel @Inject constructor(
 
     private fun handleStartChat() {
         viewModelScope.launch {
+            if (microphoneChecker.isEmulator()) {
+                _event.emit(ConversationEvent.ShowError("Emulyatorda ovoz tanish ishlamaydi"))
+              //  return@launch
+            }
             if (!networkMonitor.isConnected()) {
                 _event.emit(ConversationEvent.ShowNoInternetDialog)
                 return@launch
@@ -176,6 +180,10 @@ class ConversationViewModel @Inject constructor(
 
     private fun startListening() {
         viewModelScope.launch {
+            if (microphoneChecker.isEmulator()) {
+                _event.emit(ConversationEvent.ShowError("Emulyatorda ovoz tanish ishlamaydi"))
+               // return@launch
+            }
             if (!networkMonitor.isConnected()) {
                 _event.emit(ConversationEvent.ShowNoInternetDialog)
                 return@launch

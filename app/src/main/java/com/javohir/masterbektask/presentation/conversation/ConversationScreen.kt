@@ -61,7 +61,7 @@ fun ConversationScreen(
                 is ConversationEvent.StartListening -> {}
                 is ConversationEvent.StopListening -> {}
                 is ConversationEvent.ShowError -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
                 is ConversationEvent.ShowNoInternetDialog -> {
                     showNoInternetDialog = true
