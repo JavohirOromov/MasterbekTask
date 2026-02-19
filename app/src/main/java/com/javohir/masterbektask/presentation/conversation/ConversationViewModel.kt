@@ -8,6 +8,7 @@ import android.net.Uri
 import androidx.core.net.toUri
 import com.javohir.masterbektask.domain.model.ConversationState
 import com.javohir.masterbektask.domain.useCase.GetVideoForKeywordUseCase
+import android.speech.SpeechRecognizer
 import com.javohir.masterbektask.utils.NetworkMonitor
 import com.javohir.masterbektask.utils.SpeechRecognizerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -80,7 +81,7 @@ class ConversationViewModel @Inject constructor(
         when (intent) {
             is ConversationIntent.StartChat -> handleStartChat()
             is ConversationIntent.SpeechResult -> handleSpeechResult(intent.text)
-            is ConversationIntent.SpeechError -> handleSpeechError(intent.message)
+            is ConversationIntent.SpeechError -> handleSpeechError(intent.errorCode, intent.message)
             is ConversationIntent.VideoEnded -> handleVideoEnded()
         }
     }
@@ -123,12 +124,12 @@ class ConversationViewModel @Inject constructor(
                     )
                 }
             } else {
-                handleSpeechError("Video topilmadi")
+                handleSpeechError(SpeechRecognizer.ERROR_CLIENT, "Video topilmadi")
             }
         }
     }
 
-    private fun handleSpeechError(message: String) {
+    private fun handleSpeechError(errorCode: Int, message: String) {
         viewModelScope.launch {
             _event.emit(ConversationEvent.ShowError(message))
             val videoResponse = getVideoForKeywordUseCase.getFallbackVideo()
@@ -189,8 +190,8 @@ class ConversationViewModel @Inject constructor(
                     onResult = { text ->
                         onAction(ConversationIntent.SpeechResult(text))
                     },
-                    onError = { error ->
-                        onAction(ConversationIntent.SpeechError(error))
+                    onError = { code, message ->
+                        onAction(ConversationIntent.SpeechError(code, message))
                     },
                     onListeningChanged = { isListening ->
                         updateState { it.copy(isListening = isListening) }

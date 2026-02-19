@@ -25,7 +25,7 @@ class SpeechRecognizerHelper @Inject constructor(
     private var resultAlreadyDelivered = false
 
     private var onResultCallback: ((String) -> Unit)? = null
-    private var onErrorCallback: ((String) -> Unit)? = null
+    private var onErrorCallback: ((Int, String) -> Unit)? = null
     private var onListeningChangedCallback: ((Boolean) -> Unit)? = null
 
 
@@ -36,11 +36,11 @@ class SpeechRecognizerHelper @Inject constructor(
 
     fun startListening(
         onResult: (String) -> Unit,
-        onError: (String) -> Unit,
+        onError: (errorCode: Int, message: String) -> Unit,
         onListeningChanged: (Boolean) -> Unit
     ) {
         if (!isAvailable()) {
-            onError("Speech recognition mavjud emas")
+            onError(SpeechRecognizer.ERROR_CLIENT, "Speech recognition mavjud emas")
             return
         }
 
@@ -61,8 +61,10 @@ class SpeechRecognizerHelper @Inject constructor(
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US") // Ingliz tili
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+          //  putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 5000)
+           // putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 3000)
         }
 
         speechRecognizer?.startListening(intent)
@@ -119,7 +121,7 @@ class SpeechRecognizerHelper @Inject constructor(
                     else -> "Noma'lum xatolik"
                 }
 
-                onErrorCallback?.invoke(errorMessage)
+                onErrorCallback?.invoke(error, errorMessage)
             }
 
             override fun onResults(results: Bundle?) {
@@ -151,7 +153,7 @@ class SpeechRecognizerHelper @Inject constructor(
                     resultAlreadyDelivered = true
                     onResultCallback?.invoke(bestMatch)
                 } else {
-                    onErrorCallback?.invoke("Natija topilmadi")
+                    onErrorCallback?.invoke(SpeechRecognizer.ERROR_NO_MATCH, "Natija topilmadi")
                 }
 
                onListeningChangedCallback?.let { false }

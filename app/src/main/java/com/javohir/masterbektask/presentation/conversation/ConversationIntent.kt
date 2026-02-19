@@ -10,5 +10,5 @@ sealed class ConversationIntent {
     object VideoEnded : ConversationIntent()
     object StartChat : ConversationIntent()
     data class SpeechResult(val text: String) : ConversationIntent()
-    data class SpeechError(val message: String) : ConversationIntent()
+    data class SpeechError(val errorCode: Int, val message: String) : ConversationIntent()
 }
