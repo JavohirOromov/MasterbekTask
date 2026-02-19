@@ -1,5 +1,6 @@
 package com.javohir.masterbektask.presentation.conversation
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,7 +39,7 @@ fun ConversationScreen(
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
-
+    val context = LocalContext.current
 
     DisposableEffect(lifecycleOwner) {
         viewModel.observeLifecycle(lifecycleOwner)
@@ -50,7 +52,9 @@ fun ConversationScreen(
             when (event) {
                 is ConversationEvent.StartListening -> {}
                 is ConversationEvent.StopListening -> {}
-                is ConversationEvent.ShowError -> {}
+                is ConversationEvent.ShowError -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

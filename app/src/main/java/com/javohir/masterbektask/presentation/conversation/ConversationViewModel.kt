@@ -78,7 +78,7 @@ class ConversationViewModel @Inject constructor(
         when (intent) {
             is ConversationIntent.StartChat -> handleStartChat()
             is ConversationIntent.SpeechResult -> handleSpeechResult(intent.text)
-            is ConversationIntent.SpeechError -> handleSpeechError()
+            is ConversationIntent.SpeechError -> handleSpeechError(intent.message)
             is ConversationIntent.VideoEnded -> handleVideoEnded()
         }
     }
@@ -117,13 +117,14 @@ class ConversationViewModel @Inject constructor(
                     )
                 }
             } else {
-                handleSpeechError()
+                handleSpeechError("Video topilmadi")
             }
         }
     }
 
-    private fun handleSpeechError() {
+    private fun handleSpeechError(message: String) {
         viewModelScope.launch {
+            _event.emit(ConversationEvent.ShowError(message))
             val videoResponse = getVideoForKeywordUseCase.getFallbackVideo()
             if (videoResponse != null) {
                 updateState {
@@ -179,7 +180,7 @@ class ConversationViewModel @Inject constructor(
                         onAction(ConversationIntent.SpeechResult(text))
                     },
                     onError = { error ->
-                        onAction(ConversationIntent.SpeechError)
+                        onAction(ConversationIntent.SpeechError(error))
                     },
                     onListeningChanged = { isListening ->
                         updateState { it.copy(isListening = isListening) }
