@@ -8,13 +8,13 @@ import android.speech.SpeechRecognizer
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+
 /**
  * Created by: Javohir Oromov macos
  * Project: MasterbekTask
  * Package: com.javohir.masterbektask.utils
  * Description: SpeechRecognizer Helper - Android SpeechRecognizer API wrapper
  */
-
 
 class SpeechRecognizerHelper @Inject constructor(
     @param:ApplicationContext private val context: Context
