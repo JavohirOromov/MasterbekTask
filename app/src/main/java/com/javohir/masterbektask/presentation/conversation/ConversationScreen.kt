@@ -53,6 +53,7 @@ fun ConversationScreen(
 
 
     var showNoInternetDialog by remember { mutableStateOf(false) }
+    var showMicrophoneErrorDialog by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
@@ -65,6 +66,9 @@ fun ConversationScreen(
                 is ConversationEvent.ShowNoInternetDialog -> {
                     showNoInternetDialog = true
                 }
+                is ConversationEvent.ShowMicrophoneError -> {
+                    showMicrophoneErrorDialog = event.message
+                }
             }
         }
     }
@@ -76,6 +80,19 @@ fun ConversationScreen(
             text = { Text("Internet'ga ulaning") },
             confirmButton = {
                 TextButton(onClick = { showNoInternetDialog = false }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
+
+    showMicrophoneErrorDialog?.let { message ->
+        AlertDialog(
+            onDismissRequest = { showMicrophoneErrorDialog = null },
+            title = { Text("Mikrofon") },
+            text = { Text(message) },
+            confirmButton = {
+                TextButton(onClick = { showMicrophoneErrorDialog = null }) {
                     Text("OK")
                 }
             }

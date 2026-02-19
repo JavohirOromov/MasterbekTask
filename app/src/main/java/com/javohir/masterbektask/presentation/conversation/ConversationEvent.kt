@@ -12,4 +12,5 @@ sealed class ConversationEvent {
     object StopListening : ConversationEvent()
     data class ShowError(val message: String) : ConversationEvent()
     object ShowNoInternetDialog : ConversationEvent()
+    data class ShowMicrophoneError(val message: String) : ConversationEvent()
 }

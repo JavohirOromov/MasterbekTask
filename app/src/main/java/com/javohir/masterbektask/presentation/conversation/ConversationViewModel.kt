@@ -8,6 +8,7 @@ import androidx.core.net.toUri
 import com.javohir.masterbektask.domain.model.ConversationState
 import com.javohir.masterbektask.domain.useCase.GetVideoForKeywordUseCase
 import android.speech.SpeechRecognizer
+import com.javohir.masterbektask.utils.MicrophoneChecker
 import com.javohir.masterbektask.utils.NetworkMonitor
 import com.javohir.masterbektask.utils.SpeechRecognizerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +31,8 @@ import javax.inject.Inject
 class ConversationViewModel @Inject constructor(
     private val getVideoForKeywordUseCase: GetVideoForKeywordUseCase,
     private val speechRecognizerHelper: SpeechRecognizerHelper,
-    private val networkMonitor: NetworkMonitor
+    private val networkMonitor: NetworkMonitor,
+    private val microphoneChecker: MicrophoneChecker
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ConversationUiState())
@@ -90,6 +92,10 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             if (!networkMonitor.isConnected()) {
                 _event.emit(ConversationEvent.ShowNoInternetDialog)
+                return@launch
+            }
+            microphoneChecker.getUnavailableReason()?.let { reason ->
+                _event.emit(ConversationEvent.ShowMicrophoneError(reason))
                 return@launch
             }
             val videoResponse = getVideoForKeywordUseCase.getGreetingVideo()
@@ -172,6 +178,10 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             if (!networkMonitor.isConnected()) {
                 _event.emit(ConversationEvent.ShowNoInternetDialog)
+                return@launch
+            }
+            microphoneChecker.getUnavailableReason()?.let { reason ->
+                _event.emit(ConversationEvent.ShowMicrophoneError(reason))
                 return@launch
             }
             val videoResponse = getVideoForKeywordUseCase.getListeningVideo()
