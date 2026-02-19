@@ -8,8 +8,6 @@ import android.speech.SpeechRecognizer
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-
-
 /**
  * Created by: Javohir Oromov macos
  * Project: MasterbekTask
@@ -21,6 +19,7 @@ import javax.inject.Inject
 class SpeechRecognizerHelper @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) {
+
     private var speechRecognizer: SpeechRecognizer? = null
     private var isListening = false
     private var resultAlreadyDelivered = false
@@ -60,6 +59,7 @@ class SpeechRecognizerHelper @Inject constructor(
 
 
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US") // Ingliz tili
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
