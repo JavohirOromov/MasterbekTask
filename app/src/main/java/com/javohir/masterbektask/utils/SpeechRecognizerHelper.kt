@@ -162,15 +162,12 @@ class SpeechRecognizerHelper @Inject constructor(
 
             override fun onPartialResults(partialResults: Bundle?) {
                 val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                if (!matches.isNullOrEmpty()) {
-                }
+                if (!matches.isNullOrEmpty()) { }
             }
-
             override fun onEvent(eventType: Int, params: Bundle?) {
             }
         }
     }
-
     fun release() {
         stopListening()
         speechRecognizer?.destroy()

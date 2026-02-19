@@ -4,7 +4,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import android.net.Uri
 import androidx.core.net.toUri
 import com.javohir.masterbektask.domain.model.ConversationState
 import com.javohir.masterbektask.domain.useCase.GetVideoForKeywordUseCase
